@@ -1,6 +1,6 @@
 # webdav
 
-owner token glpat-ahmgcRocsCBwKSqUCyBv
+
 
 ## Getting started
 
