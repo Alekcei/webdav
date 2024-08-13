@@ -12,18 +12,13 @@ HKLM\SYSTEM\CurrentControlSet\Services\WebClient\Parameters
 
 BasicAuthLevel – тип аутентификации, используемый клиентом WebClient. Доступны следующие значения:
 
-**0** — Базовая (Basic) аутентификация отключена
+**0** — Базовая (Basic) аутентификация отключена  
 **1** — Базовая (аутентификация включена только SSL каталогов — это значение используется по умолчанию в Windows Server 2016)  
-**2** и выше — используется базовая аутентификация для любого типа общих каталогов, как с поддержкой SSL,
-  так и без (это небезопасный вариант, т.к. имя и пароль пользователя при таком типе аутентификации пересылаются по сети в открытом виде)
+**2** и выше — используется базовая аутентификация для любого типа общих каталогов, как с поддержкой SSL,  
+  так и без (это небезопасный вариант, т.к. имя и пароль пользователя при таком типе аутентификации пересылаются по сети в открытом виде)  
 При включении данной настройки можно тестировать webDav под http.
 
-Ссылки:
-1 https://www.baeldung.com/linux/add-self-signed-certificate-trusted-list
-2 https://documentation.solarwinds.com/en/success_center/whd/content/helpdeskcreatepkcs12ikeystorefromprivatekeycert.htm
-3 https://www.baeldung.com/linux/add-self-signed-certificate-trusted-list
-4 https://unix.stackexchange.com/questions/644176/how-to-permanently-add-self-signed-certificate-in-firefox
-4 https://aboutssl.org/how-to-fix-mozilla-pkix-self-signed-cert-error/
+
 
 ### WindowsClient описание последовательности запросов.
 Стандартный клиент windows, через который идет подключение сетевого диска имеет некую специфику при взаимодействии с сервером.  
@@ -34,3 +29,10 @@ BasicAuthLevel – тип аутентификации, используемый
 ```
 
 ```
+
+Ссылки:
+1 https://www.baeldung.com/linux/add-self-signed-certificate-trusted-list  
+2 https://documentation.solarwinds.com/en/success_center/whd/content/helpdeskcreatepkcs12ikeystorefromprivatekeycert.htm  
+3 https://www.baeldung.com/linux/add-self-signed-certificate-trusted-list  
+4 https://unix.stackexchange.com/questions/644176/how-to-permanently-add-self-signed-certificate-in-firefox  
+4 https://aboutssl.org/how-to-fix-mozilla-pkix-self-signed-cert-error/  

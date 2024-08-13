@@ -1,0 +1,14 @@
+pluginManagement {
+	repositories {
+		maven { url 'https://repo.spring.io/milestone' }
+		maven { url 'https://repo.spring.io/snapshot' }
+		gradlePluginPortal()
+	}
+}
+rootProject.name = 'webdav-project'
+
+include(":server")
+findProject(":server")?.projectDir = new File("./webdav-server")
+
+include(":proxy")
+findProject(":proxy")?.projectDir = new File("./proxy-gateway")
