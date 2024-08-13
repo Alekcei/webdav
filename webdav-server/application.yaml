@@ -17,12 +17,7 @@ webdav.cors.origins: '*'
 logging.access.name: './access.log'
 ####  STATIC webdav  ####
 webdav.folders[0].path: '/home/alekcei/webdav'
-webdav.folders[0].login: alekseisosnovskikh
-webdav.folders[0].password: hqsfkdtmarovalyu
-
-#
-webdav.folders[1].path: '/home/alekcei/webdav'
-webdav.folders[1].login: ivanov
-webdav.folders[1].password: 123456
+webdav.folders[0].login: ivanov
+webdav.folders[0].password: 123456
 
 
