@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+<include resource="org/springframework/boot/logging/logback/base.xml"/>
+<springProperty scope="context" name="ACCESS_FILE_NAME" source="logging.access.name"/>
+<property name="ACCESS_LOG_FILE" value="${ACCESS_FILE_NAME:-${LOG_PATH:-${LOG_TEMP:-${java.io.tmpdir:-/tmp}}}/access.log}"/>
+<springProperty scope="context" name="ACCESS_ROLLINGPOLICY_MAX_FILE_SIZE" source="logging.access.rollingpolicy.max-file-size"/>
+<springProperty scope="context" name="ACCESS_ROLLINGPOLICY_TOTAL_SIZE_CAP" source="logging.access.rollingpolicy.total-size-cap"/>
+<springProperty scope="context" name="ACCESS_ROLLINGPOLICY_CLEAN_HISTORY_ON_START" source="logging.access.rollingpolicy.clean-history-on-start"/>
+<springProperty scope="context" name="ACCESS_ROLLINGPOLICY_FILE_NAME_PATTERN" source="logging.access.rollingpolicy.file-name-pattern"/>
+<springProperty scope="context" name="ACCESS_ROLLINGPOLICY_MAX_HISTORY" source="logging.access.rollingpolicy.max-history"/>
+
+<appender name="access" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <file>${ACCESS_LOG_FILE}</file>
+    <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+        <fileNamePattern>${ACCESS_ROLLINGPOLICY_FILE_NAME_PATTERN:-${ACCESS_LOG_FILE}.%d{yyyy-MM-dd}.%i.gz}</fileNamePattern>
+        <cleanHistoryOnStart>${ACCESS_ROLLINGPOLICY_CLEAN_HISTORY_ON_START:-false}</cleanHistoryOnStart>
+        <maxFileSize>${ACCESS_ROLLINGPOLICY_MAX_FILE_SIZE:-100MB}</maxFileSize>
+        <totalSizeCap>${ACCESS_ROLLINGPOLICY_TOTAL_SIZE_CAP:-0}</totalSizeCap>
+        <maxHistory>${ACCESS_ROLLINGPOLICY_MAX_HISTORY:-7}</maxHistory>
+    </rollingPolicy>
+<!--    <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">-->
+<!--        <maxFileSize>5KB</maxFileSize>-->
+<!--    </triggeringPolicy>-->
+    <encoder>
+        <pattern>%msg%n</pattern>
+    </encoder>
+</appender>
+<appender name="async" class="ch.qos.logback.classic.AsyncAppender">
+<appender-ref ref="access" />
+</appender>
+
+<logger name="reactor.netty.http.server.AccessLog" level="INFO" additivity="false">
+<appender-ref ref="async"/>
+</logger>
+</configuration>
