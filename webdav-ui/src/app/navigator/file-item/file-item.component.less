@@ -1,0 +1,39 @@
+img {
+  width: 24px;
+  height: 24px;
+  margin-right: 10px;
+}
+
+span {
+  user-select: none; /* standard syntax */
+  -webkit-user-select: none; /* webkit (safari, chrome) browsers */
+  -moz-user-select: none; /* mozilla browsers */
+  -khtml-user-select: none; /* webkit (konqueror) browsers */
+  -ms-user-select: none; /* IE10+ */
+  overflow: hidden;
+
+}
+button {
+  background: none;
+  border: 0;
+  display: inline-flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: start;
+  width: 100%;
+  overflow: hidden;
+  &:focus {outline:0;}
+}
+
+:host:hover img {
+  filter: brightness(1.15);
+}
+
+//noinspection CssInvalidPropertyValue
+:host-context(.compact) span {
+  text-overflow: ellipsis;
+  text-wrap: nowrap;
+}
+:host.focus {
+  background: #92B372;
+}

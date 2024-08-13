@@ -1,0 +1,16 @@
+<div class="go-up" [class.active]="!(this.current?.href == '/')" (click)="toUp()">
+  <b>На верх</b>
+<!--  <img class="arrow-up" src="assets/arrow-up.svg" width="30" height="30"/>-->
+
+  <svg  xmlns="http://www.w3.org/2000/svg">
+    <path d="M12 4V14M12 4L8 8M12 4L16 8" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  </svg>
+
+</div>
+<br/>
+<br/>
+
+<b (click)="toHome()" >На главную</b>
+<br/>
+<b>Места</b>
+<br/>

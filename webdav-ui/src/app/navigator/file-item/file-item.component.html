@@ -1,0 +1,4 @@
+<button (focus)="onFocus()"  (focusout)="onFocusOut()" title="{{fileInfo.displayName.length> 20 ? fileInfo.displayName : ''}}">
+  <img #preview src="icons"  (error)="errorLoapPreview()" >
+  <span>{{fileInfo.displayName}}</span>
+</button>

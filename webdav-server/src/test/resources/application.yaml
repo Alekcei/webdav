@@ -1,0 +1,9 @@
+webdav.folders[0].login: UserAdmin
+webdav.folders[0].password: 123456
+webdav.folders[0].path: testfolder/webdav1
+
+webdav.folders[1].path: testfolder/webdav1
+webdav.folders[1].login: UserReader
+# Только чтение
+webdav.folders[1].readonly: true
+webdav.folders[1].password: 123456

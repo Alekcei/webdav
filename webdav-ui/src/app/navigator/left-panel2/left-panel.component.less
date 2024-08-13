@@ -1,0 +1,36 @@
+:host {
+  background: #F3F2F2;
+  width: 130px;
+  min-width: 100px;
+  border-right: 1px solid #C7C7C7;
+}
+
+.arrow-up path {
+  fill: #651111;
+}
+
+
+.go-up {
+  user-select: none;
+  cursor: pointer;
+  display: inline-flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  stroke: #000;
+  img {
+    height: 18px;
+  }
+  svg {
+    width: 20px;
+    height: 20px;
+  }
+  &:not(.active) {
+    color: grey;
+
+    cursor: default;
+    & path {
+      stroke: grey;
+    }
+  }
+}
