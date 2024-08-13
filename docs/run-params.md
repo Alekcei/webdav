@@ -1,7 +1,7 @@
 ### Параметры для запуска сервера
 Минимальный конфиг
 ```
-webdav.folder.path: '/home/alekcei/webdav'
+webdav.folder.path: '/home/${user.name}/webdav'
 ```
 `webdav.folder.path` путь до папки.
 
