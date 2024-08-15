@@ -82,11 +82,6 @@ public class RouterController {
         String host = request.headers().header("Host").stream().findFirst().orElse(null);
         String authorize = request.headers().header("Authorization").stream().findFirst().orElse(null);
 
-        if (cfg.needAuth(host) && authorize == null) {
-            return ServerResponse.status(401)
-                    .header("WWW-Authenticate", "Basic realm=\"User Visible Realm\", charset=\"UTF-8\"").build();
-        }
-
         String user = null;
         String password = null;
 
@@ -103,27 +98,40 @@ public class RouterController {
         String finalUser = user;
         String finalPassword = password;
 
-        return Mono.just(cfg.getConfig(host, user)).flatMap(itemData -> {
+        return getAuthInfo(host, user)
+                .flatMap(itemData -> {
 
+                    if (itemData == null) {
+                        return ServerResponse.status(401).build();
+                    }
 
-            if (itemData == null) {
-                return ServerResponse.status(401).build();
-            }
+                    if (!equels(finalUser, itemData.getLogin()) ||
+                        !equels(finalPassword, itemData.getPassword()) ) {
 
-            if (!equels(finalUser, itemData.getLogin()) ||
-                !equels(finalPassword, itemData.getPassword()) ) {
+                        return ServerResponse.status(401).build();
+                    }
 
-                return ServerResponse.status(401).build();
-            }
+                    if (itemData.getReadonly() && !readonlyAllow.contains(request.methodName().toUpperCase())) {
+                        return ServerResponse.status(403).build();
+                    }
 
-            if (itemData.getReadonly() && !readonlyAllow.contains(request.methodName().toUpperCase())) {
-                return ServerResponse.status(403).build();
-            }
+                    request.exchange().getAttributes().put("config", itemData);
+                    return handlerFunction.handle(request);
+                })
+                .onErrorResume(err -> {
+                    return ServerResponse.status(401)
+                            .header("WWW-Authenticate", "Basic realm=\"User Visible Realm\", charset=\"UTF-8\"").build();
+                });
 
-            request.exchange().getAttributes().put("config", itemData);
-            return handlerFunction.handle(request);
-        });
+    }
 
+    Mono<Item> getAuthInfo(String host, String user) {
+        var res = cfg.getConfig(host, user);
+        if (res == null) {
+            return Mono.error(new RuntimeException("111"));
+        }
+
+        return Mono.just(res);
     }
 
     public Mono<ServerResponse> mkcol(ServerRequest serverRequest) {

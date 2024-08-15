@@ -1,4 +1,4 @@
-# server.port: 8088
+server.port: 8088
 # http.port: 8082
 webdav.cors: http://localhost:4200"
 #ssl
@@ -17,9 +17,9 @@ webdav.cors: http://localhost:4200"
 #webdav.cors.origins: '*'
 #logging.access.name: './access.log'
 ####  STATIC webdav  ####
-#webdav.folders[0].path: '/home/alekcei/webdav'
-#webdav.folders[0].login: ivanov
-#webdav.folders[0].password: 123456
+webdav.folders[0].path: '/home/alekcei/webdav'
+webdav.folders[0].login: ivanov
+webdav.folders[0].password: 123456
 #
-
-webdav.folder.path: '/home/alekcei/webdav'
+#
+#webdav.folder.path: '/home/alekcei/webdav'
