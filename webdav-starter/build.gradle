@@ -1,6 +1,6 @@
 plugins {
 	id 'java'
-	id 'org.springframework.boot' version '2.7.16-SNAPSHOT' apply false
+	id 'org.springframework.boot' version '2.7.16-SNAPSHOT'
 	id 'io.spring.dependency-management' version '1.0.15.RELEASE'
 //	id 'com.palantir.docker' version '0.35.0'
 //	id 'com.palantir.docker-run' version '0.35.0'
@@ -37,12 +37,6 @@ dependencies {
 
 tasks.named('test') {
 	useJUnitPlatform()
-}
-
-bootJar {
-
-	archiveFileName = "webdav.${archiveExtension.get()}"
-	launchScript()
 }
 
 // id 'com.palantir.docker' version '0.35.0'
