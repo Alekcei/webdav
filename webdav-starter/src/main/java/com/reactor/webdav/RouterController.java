@@ -200,8 +200,7 @@ public class RouterController {
         String rootFolder = cfg.getPath();
 
         return server.getResource(rootFolder, serverRequest.uri().getPath())
-                // BodyInserters.fromResource потдерживает заголовок Range
-                // смотреть класс ResourceHttpMessageWriter
+                // BodyInserters.fromResource потдерживает заголовок Range, смотреть класс ResourceHttpMessageWriter
                 .flatMap(resource -> ServerResponse.ok().body(BodyInserters.fromResource(resource)))
                 .onErrorResume(FileNotFoundException.class,   err -> ServerResponse.status(404).build())
                 .onErrorResume(HttpStatusCodeException.class, err -> ServerResponse.status(err.getRawStatusCode()).build())

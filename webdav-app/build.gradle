@@ -1,0 +1,70 @@
+plugins {
+	id 'java'
+	id 'org.springframework.boot' version '2.7.16-SNAPSHOT'
+	id 'io.spring.dependency-management' version '1.0.15.RELEASE'
+//	id 'com.palantir.docker' version '0.35.0'
+//	id 'com.palantir.docker-run' version '0.35.0'
+}
+
+group = 'com.reactor.webdav'
+version = '0.0.2'
+
+java {
+	sourceCompatibility = '11'
+}
+
+repositories {
+	mavenCentral()
+	maven { url 'https://repo.spring.io/milestone' }
+	maven { url 'https://repo.spring.io/snapshot' }
+}
+
+dependencies {
+
+    compileOnly 'org.projectlombok:lombok'
+	annotationProcessor 'org.projectlombok:lombok'
+
+	implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client:3.1.7'
+	implementation 'org.springframework.boot:spring-boot-starter-webflux'
+	implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.11.1'
+	implementation 'org.springframework.cloud:spring-cloud-starter-config:3.1.8'
+
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testImplementation 'io.projectreactor:reactor-test:3.2.3.RELEASE'
+
+	testCompileOnly 'org.projectlombok:lombok'
+	testAnnotationProcessor 'org.projectlombok:lombok'
+
+}
+
+tasks.named('test') {
+	useJUnitPlatform()
+}
+bootJar {
+
+	archiveFileName = "webdav.${archiveExtension.get()}"
+	launchScript()
+}
+
+// id 'com.palantir.docker' version '0.35.0'
+// id 'com.palantir.docker-run' version '0.35.0'
+// https://kb.novaordis.com/index.php/Com.palantir.docker
+// https://stackoverflow.com/questions/76754126/unable-to-build-image-with-gradle-docker-plugins-palantir
+//docker {
+//	String distributionBaseName = project.name;
+//	File distributionZip = new File(new File(project.buildDir, "libs"), distributionBaseName + ".jar")
+//	name "${project.name}:${project.version}"
+//	dockerfile file('Dockerfile')
+//	files distributionZip
+//	buildArgs(['JAR_FILE': "${project.name}.jar"])
+//	labels(['key': 'value'])
+//	pull true
+//	noCache true
+//}
+//dockerRun {
+//	name "${project.name}"
+//	image "${project.name}:${project.version}"
+//	ports '8080:8080'
+//	volumes(['/home/alekcei/webdav':'/webdav']) // путь куда монтируем катлог с webdaw
+//	clean true
+//}

@@ -7,8 +7,11 @@ pluginManagement {
 }
 rootProject.name = 'webdav-project'
 
-include(":server")
-findProject(":server")?.projectDir = new File("./webdav-server")
+include(":starter")
+findProject(":starter")?.projectDir = new File("./webdav-starter")
 
 include(":proxy")
 findProject(":proxy")?.projectDir = new File("./proxy-gateway")
+
+include(":app")
+findProject(":app")?.projectDir = new File("./webdav-app")
