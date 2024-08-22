@@ -15,7 +15,7 @@ webdav.cors: http://localhost:4200"
 #server.ssl.certificate-private-key: /home/alekcei/keystore/privkey.pem
 # webdav.cors.origins: http://localhost:4200
 #webdav.cors.origins: '*'
-#logging.access.name: './access.log'
+logging.access.name: './access.log'
 ####  STATIC webdav  ####
 webdav.folders[0].path: '/home/alekcei/webdav'
 webdav.folders[0].login: ivanov
