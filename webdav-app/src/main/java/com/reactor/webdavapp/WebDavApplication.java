@@ -1,4 +1,4 @@
-package com.reactor.webdav;
+package com.reactor.webdavapp;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
