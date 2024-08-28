@@ -1,0 +1,39 @@
+{
+  "groups": [
+    {
+      "name": "webdav",
+      "type": "com.reactor.webdav.WebdavConfiguration"
+    }
+  ],
+  "properties": [
+    {
+      "name": "webdav.folder.path",
+      "type": "java.lang.String",
+      "description": "Путь до каталога",
+      "sourceType": "com.reactor.webdav.WebdavConfiguration"
+    },
+    {
+      "name": "webdav.folder.host",
+      "type": "java.lang.String",
+      "description": "HostHeader пришедший в запросе",
+      "sourceType": "com.reactor.webdav.WebdavConfiguration"
+    },
+    {
+      "name": "webdav.folder.login",
+      "type": "java.lang.String",
+      "description": "Логин пользователя для подключения",
+      "sourceType": "com.reactor.webdav.WebdavConfiguration"
+    },
+    {
+      "name": "webdav.folder.password",
+      "type": "java.lang.String",
+      "description": "Пароль пользователя для подключения",
+      "sourceType": "com.reactor.webdav.WebdavConfiguration"
+    },
+    {
+      "name": "webdav.folders",
+      "type": "java.util.List<com.reactor.webdav.Item>",
+      "description": "Список каталогов доступные для раздачи у каждого каталога свой логин и пароль"
+    }
+  ]
+}
