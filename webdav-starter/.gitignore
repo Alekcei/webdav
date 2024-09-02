@@ -32,7 +32,8 @@ out/
 /dist/
 /nbdist/
 /.nb-gradle/
-
+/testfolder/webdav1/**
+/testfolder/webdav2/**
 ### VS Code ###
 .vscode/
 /access.log
