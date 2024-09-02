@@ -33,8 +33,8 @@ BasicAuthLevel – тип аутентификации, используемый
 ```
 
 Ссылки:
-1 https://www.baeldung.com/linux/add-self-signed-certificate-trusted-list  
-2 https://documentation.solarwinds.com/en/success_center/whd/content/helpdeskcreatepkcs12ikeystorefromprivatekeycert.htm  
+1 https://www.baeldung.com/linux/add-self-signed-certificate-trusted-list   
+2 https://documentation.solarwinds.com/en/success_center/whd/content/helpdeskcreatepkcs12ikeystorefromprivatekeycert.htm   
 3 https://www.baeldung.com/linux/add-self-signed-certificate-trusted-list  
 4 https://unix.stackexchange.com/questions/644176/how-to-permanently-add-self-signed-certificate-in-firefox  
 4 https://aboutssl.org/how-to-fix-mozilla-pkix-self-signed-cert-error/  
