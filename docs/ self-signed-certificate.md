@@ -32,7 +32,7 @@ BasicAuthLevel – тип аутентификации, используемый
 
 ```
 
-Ссылки:
+Ссылки:  
 1 https://www.baeldung.com/linux/add-self-signed-certificate-trusted-list   
 2 https://documentation.solarwinds.com/en/success_center/whd/content/helpdeskcreatepkcs12ikeystorefromprivatekeycert.htm   
 3 https://www.baeldung.com/linux/add-self-signed-certificate-trusted-list  
