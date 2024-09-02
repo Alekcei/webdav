@@ -135,10 +135,10 @@ public class WebDavServerImpl implements WebDavServer {
 
     @Override
     @SneakyThrows
-    public Mono<Boolean> copy(String root, String source, String target, boolean overwriting, String depth) {
+    public Mono<Boolean> copy(String rootFolder, String source, String target, boolean overwriting, String depth) {
 
-        File sourceFile = pathsUtils.toFile(root, source); // ;  new File(root + source);
-        File targetFile = pathsUtils.toFile(root, target);
+        File sourceFile = pathsUtils.toFile(rootFolder, source); // ;  new File(root + source);
+        File targetFile = pathsUtils.toFile(rootFolder, target);
         if (targetFile.exists()) {
             if(overwriting) {
                 targetFile.deleteOnExit();
@@ -165,11 +165,11 @@ public class WebDavServerImpl implements WebDavServer {
     }
     @Override
     @SneakyThrows
-    public Mono<Boolean> move(String root, String source, String target) {
+    public Mono<Boolean> move(String rootFolder, String source, String target) {
 
         // target = new URL(target).getPath();
-        File sourceFile = pathsUtils.toFile(root, source);
-        sourceFile.renameTo( pathsUtils.toFile(root , target));
+        File sourceFile = pathsUtils.toFile(rootFolder, source);
+        sourceFile.renameTo( pathsUtils.toFile(rootFolder, target));
 
         return  Mono.just(true);
     }

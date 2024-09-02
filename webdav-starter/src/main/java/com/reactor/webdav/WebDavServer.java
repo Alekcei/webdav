@@ -20,11 +20,11 @@ public interface WebDavServer {
 
     Mono<Void> putFile(String rootFolder, String rqPath, Flux<DataBuffer> bodyBuffer);
 
-    Mono<Boolean> copy(String root, String source, String target, boolean overwriting, String depth);
+    Mono<Boolean> copy(String rootFolder, String source, String target, boolean overwriting, String depth);
 
     Mono<Boolean> delete(String rootFolder, String path);
 
-    Mono<Boolean> move(String root, String source, String target);
+    Mono<Boolean> move(String rootFolder, String source, String target);
 
     default Mono<Void> createEmpty(String rootFolder, String rqPath) {
         return Mono.empty();
