@@ -24,8 +24,8 @@ BasicAuthLevel – тип аутентификации, используемый
 
 ### WindowsClient описание последовательности запросов.
 Стандартный клиент windows, через который идет подключение сетевого диска имеет некую специфику при взаимодействии с сервером.  
-<img alt="img.png" src="img.png" width="350"/> 
-<img alt="img_1.png" src="img_1.png" width="350"/>
+<img alt="imgs/img.png" src="imgs/img.png" width="350"/> 
+<img alt="img_1.png" src="imgs/img_1.png" width="350"/>
 
 **Добавление файла на сервер**
 ```
