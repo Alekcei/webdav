@@ -191,7 +191,7 @@ public class RouterController {
                 .onErrorResume(err -> ServerResponse.status(403).build());
 
     }
-
+    // https://github.com/nextcloud/server/blob/c9611c0f5d08cc0a41fb7018cb5691dd71b2cea0/lib/private/legacy/OC_Files.php#L352
     // https://stackoverflow.com/questions/49426304/convert-writes-to-outputstream-into-a-fluxdatabuffer-usable-by-serverresponse
     // https://www.baeldung.com/java-filechannel
     public Mono<ServerResponse> get(ServerRequest serverRequest) {
