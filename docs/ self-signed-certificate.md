@@ -24,12 +24,23 @@ BasicAuthLevel – тип аутентификации, используемый
 
 ### WindowsClient описание последовательности запросов.
 Стандартный клиент windows, через который идет подключение сетевого диска имеет некую специфику при взаимодействии с сервером.  
-<img alt="imgs/img.png" src="imgs/img.png" width="350"/> 
-<img alt="img_1.png" src="imgs/img_1.png" width="350"/>
+<img alt="imgs/img.png" src="imgs/img.png" width="400"/> 
+<img alt="img_1.png" src="imgs/img_1.png" width="400"/>
 
 **Добавление файла на сервер**
-```
-
+```mermaid
+sequenceDiagram
+  WindowsClient->>WebDavServer: PUT 0 byte
+  WebDavServer->>WebDavServer: Создает пустой файл
+  WebDavServer->>WindowsClient: return http status 201
+  WindowsClient->>WebDavServer: LOCK file
+  WebDavServer->>WindowsClient: return http status 200<br/>C телом ответа
+  WindowsClient->>WebDavServer: PUT файла с байтами
+  WindowsClient->>WebDavServer: UNLOCK file
+  WebDavServer->>WindowsClient: return http status 204<br/>C телом ответа
+  WindowsClient->>WebDavServer: PROPPATCH file
+  WebDavServer->>WindowsClient: return http status 207<br/>C телом ответа
+  
 ```
 
 Ссылки:  
