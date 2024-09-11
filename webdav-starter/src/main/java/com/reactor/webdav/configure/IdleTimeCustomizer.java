@@ -4,18 +4,17 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.websocketx.CloseWebSocketFrame;
 import io.netty.handler.timeout.IdleStateEvent;
 import io.netty.handler.timeout.IdleStateHandler;
-import io.netty.handler.timeout.ReadTimeoutException;
-import io.netty.handler.timeout.WriteTimeoutException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.embedded.netty.NettyReactiveWebServerFactory;
 import org.springframework.boot.web.server.WebServerFactoryCustomizer;
 import org.springframework.http.server.reactive.HttpHandler;
 import org.springframework.stereotype.Component;
 
-import static io.netty.handler.timeout.IdleStateEvent.WRITER_IDLE_STATE_EVENT;
-
 @Component
-public class NettyWebServerFactoryPortCustomizer  implements WebServerFactoryCustomizer<NettyReactiveWebServerFactory> {
+public class IdleTimeCustomizer implements WebServerFactoryCustomizer<NettyReactiveWebServerFactory> {
+
+    @Value("${webdav.idleTimeSeconds:#{null}}")
     int allIdleTimeSeconds = 61; // сек
     @Autowired
     private HttpHandler httpHandler;
