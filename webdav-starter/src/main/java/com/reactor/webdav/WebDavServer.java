@@ -1,7 +1,8 @@
 package com.reactor.webdav;
 
+import com.reactor.webdav.dto.LockData;
+import com.reactor.webdav.dto.LockInfo;
 import com.reactor.webdav.dto.Propfind;
-import lombok.SneakyThrows;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.buffer.DataBuffer;
 import reactor.core.publisher.Flux;
@@ -28,5 +29,25 @@ public interface WebDavServer {
 
     default Mono<Void> createEmpty(String rootFolder, String rqPath) {
         return Mono.empty();
+    }
+
+    // Блокировка файла
+    default Mono<LockData> lockFile(String rootFolder, LockInfo lockInfo) {
+
+        return Mono.just(
+            LockData.builder()
+                    .scope(lockInfo.getScope())
+                    .type(lockInfo.getType())
+                    .depth("infinity")
+                    .timeout("Second-86400")
+                    .token("opaquelocktoken:2da16a6b-d2ef-427f-b712-7a0a144f756b")
+                    .build()
+        );
+    }
+
+    // Разблокировка файла
+    default Mono<LockData> unlockFile(String rootFolder, LockInfo lockInfo) {
+
+        return Mono.error(new UnsupportedOperationException());
     }
 }

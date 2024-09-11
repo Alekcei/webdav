@@ -1,5 +1,7 @@
 package com.reactor.webdav;
 
+import com.reactor.webdav.dto.LockInfo;
+import com.reactor.webdav.dto.ParseUtils;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -48,11 +50,20 @@ class WebDavUtilsTests {
 
 
 	@Test
-	@Disabled
-	void propfind2() {
-//		var r = toRq.propfind( "/", "1", rq2);
-//		var listFiles =  toRq.propfindResponse(rootFolder, r);
-//		toRq.toResponseStreem(listFiles);
+	void fileInfo() {
+		var lockInfo = ParseUtils.parseLockInfoRequest("<D:lockinfo xmlns:D=\"DAV:\">\n" +
+				"\t<D:lockscope>\n" +
+				"\t\t<D:exclusive/>\n" +
+				"\t</D:lockscope>\n" +
+				"\t<D:locktype>\n" +
+				"\t\t<D:write/>\n" +
+				"\t</D:locktype>\n" +
+				"\t<D:owner>\n" +
+				"\t\t<D:href>alekseisosnovskikh</D:href>\n" +
+				"\t</D:owner>\n" +
+				"</D:lockinfo>");
+
+		assert lockInfo.getScope() == LockInfo.Scope.exclusive;
 	}
 
 	@Test

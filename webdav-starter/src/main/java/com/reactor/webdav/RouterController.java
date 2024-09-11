@@ -1,8 +1,7 @@
 package com.reactor.webdav;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.dataformat.xml.XmlMapper;
-import com.reactor.webdav.dto.Propfind;
+import com.reactor.webdav.dto.LockData;
+import com.reactor.webdav.dto.ParseUtils;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,10 +20,7 @@ import reactor.core.publisher.Mono;
 import java.io.*;
 import java.net.URI;
 import java.nio.file.FileAlreadyExistsException;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+
 
 // docs
 // http://www.webdav.org/specs/rfc4918.html#rfc.section.9.4
@@ -174,14 +170,14 @@ public class RouterController {
         Mono<String> bodyRq = null;
         // стандартный виндовый клиент не присылает тело запроса
         if (serverRequest.headers().contentLength().isPresent() && serverRequest.headers().contentLength().getAsLong() == 0) {
-            bodyRq = Mono.just(propfindBody);
+            bodyRq = Mono.just(ParseUtils.defaultPropfindBody);
         } else {
-            bodyRq =  serverRequest.bodyToMono(String.class).onErrorReturn(propfindBody);
+            bodyRq =  serverRequest.bodyToMono(String.class).onErrorReturn(ParseUtils.defaultPropfindBody);
         }
 
 
         return bodyRq.flatMap((body) -> {
-                    var propfindRq = parsePropfindRequest(serverRequest.uri().getPath(), depth, body);
+                    var propfindRq = ParseUtils.parsePropfindRequest(serverRequest.uri().getPath(), depth, body);
                     return server.propfindResponse(rootFolder, propfindRq);
                 })
                 .map((listFiles) -> toRq.toResponseStreem(listFiles))
@@ -207,55 +203,6 @@ public class RouterController {
                 .onErrorResume(err -> ServerResponse.status(403).build());
     }
 
-//    @SneakyThrows
-//    private Flux<DataBuffer> writeToServerResponse(Resource fielResource) {
-
-//        return DataBufferUtils.read(fielResource, 0, new DefaultDataBufferFactory(), 1024)
-//            .doOnCancel(() -> {
-//
-//                // todo надо сделать свой
-//                // private static class ReadCompletionHandler implements CompletionHandler<Integer, DataBuffer> {
-//                // что бы можно было докачивать файлы
-//                // log.error("Error reading + writing from tag to http outputstream");
-//            });
-
-//        return Flux.<DataBuffer>create((FluxSink<DataBuffer> emitter) -> {
-//            long blobSize;
-//            final int tagChunkSize = 1024;
-//            InputStream fileStream = null;
-//            try {
-//                blobSize = fielResource.contentLength();
-//                fileStream = fielResource.getInputStream();
-//
-//            } catch (IOException e) {
-//                throw new RuntimeException(e);
-//            }
-//
-//            for (int i = 0; i < blobSize; i+= tagChunkSize) {
-//
-//                DefaultDataBuffer dataBuffer = new DefaultDataBufferFactory().allocateBuffer();
-//                try (OutputStream outputStream = dataBuffer.asOutputStream()) {
-//                    byte[] buff = new byte[Math.min(tagChunkSize, fileStream.available())];
-//                    fileStream.read(buff);
-//                    dataBuffer.write(buff);
-//                    outputStream.flush();
-//                } catch (IOException e) {
-//                    log.error("Error reading + writing from tag to http outputstream", e);
-//                    emitter.error(e);
-//                }
-//                if (emitter.isCancelled()) {
-//                    return;
-//                }
-//                emitter.next(dataBuffer);
-//            }
-//
-//            emitter.complete();
-//
-//        }).doOnCancel(() -> {
-//            log.error("Error reading + writing from tag to http outputstream");
-//        });
-//    }
-//
     public Mono<ServerResponse> head(ServerRequest serverRequest) {
 
         Item cfg = (Item) serverRequest.exchange().getAttributes().get("config");
@@ -357,35 +304,53 @@ public class RouterController {
     //	</d:lockdiscovery>
     //</d:prop>
     private Mono<ServerResponse> lock(ServerRequest serverRequest) {
+        Item cfg = (Item) serverRequest.exchange().getAttributes().get("config");
+        String rootFolder = cfg.getPath();
 
-        return serverRequest.bodyToMono(String.class).flatMap(bodyRes -> {
+        return serverRequest.bodyToMono(String.class)
+            // распечатываем запрос
+            .map((bodyRes) -> printRq(serverRequest, bodyRes))
+            .flatMap((body) -> {
+                var lockInfo = ParseUtils.parseLockInfoRequest(body);
+                return server.lockFile(rootFolder, lockInfo);
+            })
+            .flatMap(lockData -> ServerResponse.ok()
+                .contentType(MediaType.APPLICATION_XML)
+                .bodyValue(ParseUtils.lockDataToBody(lockData))
+            )
+           .onErrorResume(UnsupportedOperationException.class, err -> ServerResponse.ok().contentType(MediaType.APPLICATION_XML).build());
+
+    }
+
+
+    /*
+    PROPPATCH /test/EULA.pdf
+    If: [(<opaquelocktoken:2da16a6b-d2ef-427f-b712-7a0a144f756b>)]
+
+    <?xml version="1.0" encoding="utf-8" ?><D:propertyupdate xmlns:D="DAV:" xmlns:Z="urn:schemas-microsoft-com:"><D:set><D:prop><Z:Win32LastModifiedTime>Tue, 16 Apr 2024 15:16:27 GMT</Z:Win32LastModifiedTime><Z:Win32FileAttributes>00000020</Z:Win32FileAttributes></D:prop></D:set></D:propertyupdate>
+    * */
+    public Mono<ServerResponse> unlock(ServerRequest serverRequest) {
+
+        Mono<String> bodyRq = null;
+        if (serverRequest.headers().contentLength().isPresent() && serverRequest.headers().contentLength().getAsLong()==0) {
+            bodyRq = Mono.just("");
+        } else {
+            bodyRq =  serverRequest.bodyToMono(String.class).onErrorReturn(ParseUtils.defaultPropfindBody);
+        }
+
+        return bodyRq.flatMap(bodyRqData -> {
             StringBuilder sb = new StringBuilder();
             sb.append("\n"+serverRequest.exchange().getRequest().getMethodValue() + " " + serverRequest.path()).append("\n");
             serverRequest.headers().asHttpHeaders().forEach((itKey, itVal) -> {
                 sb.append(itKey + ": " + itVal + "\n");
             });
-            sb.append("\n");
-            sb.append(bodyRes);
+
+            if (!bodyRqData.isEmpty()) {
+                sb.append("\n").append(bodyRqData);
+            }
+
             log.info(sb.toString());
-            return ServerResponse.ok().contentType(MediaType.APPLICATION_XML)
-                    .bodyValue("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
-                            "<d:prop xmlns:d=\"DAV:\">\n" +
-                            "\t<d:lockdiscovery>\n" +
-                            "\t\t<d:activelock>\n" +
-                            "\t\t\t<d:lockscope>\n" +
-                            "\t\t\t\t<d:exclusive/>\n" +
-                            "\t\t\t</d:lockscope>\n" +
-                            "\t\t\t<d:locktype>\n" +
-                            "\t\t\t\t<d:write/>\n" +
-                            "\t\t\t</d:locktype>\n" +
-                            "\t\t\t<d:depth>infinity</d:depth>\n" +
-                            "\t\t\t<d:timeout>Second-86400</d:timeout>\n" +
-                            "\t\t\t<d:locktoken>\n" +
-                            "\t\t\t\t<d:href>opaquelocktoken:2da16a6b-d2ef-427f-b712-7a0a144f756b</d:href>\n" +
-                            "\t\t\t</d:locktoken>\n" +
-                            "\t\t</d:activelock>\n" +
-                            "\t</d:lockdiscovery>\n" +
-                            "</d:prop>");
+            return ServerResponse.status(204).build();
         });
 
     }
@@ -427,67 +392,44 @@ public class RouterController {
         if (serverRequest.headers().contentLength().isPresent() && serverRequest.headers().contentLength().getAsLong()==0) {
             bodyRq = Mono.just("");
         } else {
-            bodyRq =  serverRequest.bodyToMono(String.class).onErrorReturn(propfindBody);
+            bodyRq =  serverRequest.bodyToMono(String.class).onErrorReturn(ParseUtils.defaultPropfindBody);
         }
 
-        return bodyRq.flatMap(bodyRqData -> {
-            StringBuilder sb = new StringBuilder();
-            sb.append("\n"+serverRequest.exchange().getRequest().getMethodValue() + " " + serverRequest.path()).append("\n");
-            serverRequest.headers().asHttpHeaders().forEach((itKey, itVal) -> {
-                sb.append(itKey + ": " + itVal + "\n");
-            });
+        return bodyRq
+            // распечатываем запрос
+            .map((bodyRes) -> printRq(serverRequest, bodyRes))
+            .flatMap(bodyRqData -> {
 
-            if (!bodyRqData.isEmpty()) {
-                sb.append("\n").append(bodyRqData);
-            }
-
-            log.info(sb.toString());
-            return ServerResponse.status(207).bodyValue("<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +
-                    "<d:multistatus xmlns:d=\"DAV:\">\n" +
-                    "        <d:response>\n" +
-                    "            <d:href>/%D0%97%D0%B0%D0%B3%D1%80%D1%83%D0%B7%D0%BA%D0%B8/EULA.pdf</d:href>\n" +
-                    "            <d:propstat>\n" +
-                    "                <d:prop>\n" +
-                    "                    <Win32FileAttributes xmlns=\"urn:schemas-microsoft-com:\">00000000</Win32FileAttributes>\n" +
-                    "                </d:prop>\n" +
-                    "                <d:status>HTTP/1.1 200 OK</d:status>\n" +
-                    "            </d:propstat>\n" +
-                    "        </d:response>\n" +
-                    "    </d:multistatus>");
+                    return ServerResponse.status(207).bodyValue(
+                            "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +
+                            "<d:multistatus xmlns:d=\"DAV:\">\n" +
+                            "        <d:response>\n" +
+                            "            <d:href>/%D0%97%D0%B0%D0%B3%D1%80%D1%83%D0%B7%D0%BA%D0%B8/EULA.pdf</d:href>\n" +
+                            "            <d:propstat>\n" +
+                            "                <d:prop>\n" +
+                            "                    <Win32FileAttributes xmlns=\"urn:schemas-microsoft-com:\">00000000</Win32FileAttributes>\n" +
+                            "                </d:prop>\n" +
+                            "                <d:status>HTTP/1.1 200 OK</d:status>\n" +
+                            "            </d:propstat>\n" +
+                            "        </d:response>\n" +
+                            "    </d:multistatus>"
+                    );
         });
 
     }
 
-    /*
-    PROPPATCH /test/EULA.pdf
-    If: [(<opaquelocktoken:2da16a6b-d2ef-427f-b712-7a0a144f756b>)]
 
-    <?xml version="1.0" encoding="utf-8" ?><D:propertyupdate xmlns:D="DAV:" xmlns:Z="urn:schemas-microsoft-com:"><D:set><D:prop><Z:Win32LastModifiedTime>Tue, 16 Apr 2024 15:16:27 GMT</Z:Win32LastModifiedTime><Z:Win32FileAttributes>00000020</Z:Win32FileAttributes></D:prop></D:set></D:propertyupdate>
-    * */
-    public Mono<ServerResponse> unlock(ServerRequest serverRequest) {
+    String printRq(ServerRequest serverRequest, String bodyRes) {
 
-        Mono<String> bodyRq = null;
-        if (serverRequest.headers().contentLength().isPresent() && serverRequest.headers().contentLength().getAsLong()==0) {
-            bodyRq = Mono.just("");
-        } else {
-            bodyRq =  serverRequest.bodyToMono(String.class).onErrorReturn(propfindBody);
-        }
-
-        return bodyRq.flatMap(bodyRqData -> {
-            StringBuilder sb = new StringBuilder();
-            sb.append("\n"+serverRequest.exchange().getRequest().getMethodValue() + " " + serverRequest.path()).append("\n");
-            serverRequest.headers().asHttpHeaders().forEach((itKey, itVal) -> {
-                sb.append(itKey + ": " + itVal + "\n");
-            });
-
-            if (!bodyRqData.isEmpty()) {
-                sb.append("\n").append(bodyRqData);
-            }
-
-            log.info(sb.toString());
-            return ServerResponse.status(204).build();
+        StringBuilder sb = new StringBuilder();
+        sb.append("\n" + serverRequest.exchange().getRequest().getMethodValue() + " " + serverRequest.path()).append("\n");
+        serverRequest.headers().asHttpHeaders().forEach((itKey, itVal) -> {
+            sb.append(itKey + ": " + itVal + "\n");
         });
-
+        sb.append("\n");
+        sb.append(bodyRes);
+        log.info(sb.toString());
+        return bodyRes;
     }
 
 
@@ -497,7 +439,7 @@ public class RouterController {
         if (serverRequest.headers().contentLength().isPresent() && serverRequest.headers().contentLength().getAsLong()==0) {
             bodyRq = Mono.just("");
         } else {
-            bodyRq =  serverRequest.bodyToMono(String.class).onErrorReturn(propfindBody);
+            bodyRq =  serverRequest.bodyToMono(String.class).onErrorReturn(ParseUtils.defaultPropfindBody);
         }
 
         return bodyRq.flatMap(bodyRqData -> {
@@ -557,42 +499,5 @@ public class RouterController {
         return destination;
     }
 
-    private final String propfindBody = "<?xml version=\"1.0\" encoding=\"utf-8\" ?>\n" +
-            " <D:propfind xmlns:D=\"DAV:\">\n" +
-            "  <D:prop>\n" +
-            "<D:creationdate/>\n" +
-            "<D:displayname/>\n" +
-            "<D:getcontentlength/>\n" +
-            "<D:getcontenttype/>\n" +
-            "<D:getetag/>\n" +
-            "<D:getlastmodified/>\n" +
-            "<D:resourcetype/>\n" +
-            "  </D:prop>\n" +
-            " </D:propfind>";
-
-    Propfind parsePropfindRequest(String path, String depth, String body) {
-
-        XmlMapper xmlMapper = new XmlMapper();
-        Map<?, ?> value;
-        try {
-            value = xmlMapper.readValue(body, LinkedHashMap.class);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
-        }
-        List<String> props = null;
-        if (value.containsKey("prop")) {
-            List<String> _props = new LinkedList<>();
-            ((Map<?, ?>)value.get("prop")).keySet().forEach(it -> _props.add(it.toString()) );
-            props = _props;
-        }
-
-        return Propfind.builder()
-                .path(path)
-                .depth(depth)
-                .props(props)
-                .allProp(value.containsKey("allprop"))
-                .propName(value.containsKey("propname"))
-                .build();
-    }
 }
 

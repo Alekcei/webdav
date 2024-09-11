@@ -1,4 +1,5 @@
-server.port: 8088
+server.port: 3505
+server.address: 0.0.0.0
 # http.port: 8082
 webdav.cors: http://localhost:4200"
 #ssl

@@ -40,7 +40,6 @@ sequenceDiagram
   WebDavServer->>WindowsClient: return http status 204<br/>C телом ответа
   WindowsClient->>WebDavServer: PROPPATCH file
   WebDavServer->>WindowsClient: return http status 207<br/>C телом ответа
-  
 ```
 
 Ссылки:  
