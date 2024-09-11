@@ -37,11 +37,12 @@ public class NettyWebServerFactoryPortCustomizer  implements WebServerFactoryCus
                                             ChannelHandlerContext ctx,
                                             IdleStateEvent evt
                                     ) {
-                                        ctx.fireExceptionCaught(
-                                                evt.state() == WRITER_IDLE_STATE_EVENT.state()
-                                                        ? WriteTimeoutException.INSTANCE
-                                                        : ReadTimeoutException.INSTANCE
-                                        );
+
+//                                        ctx.fireExceptionCaught(
+//                                                evt.state() == WRITER_IDLE_STATE_EVENT.state()
+//                                                        ? WriteTimeoutException.INSTANCE
+//                                                        : ReadTimeoutException.INSTANCE
+//                                        );
                                         ctx.write(new CloseWebSocketFrame());
                                         ctx.close();
                                     }
