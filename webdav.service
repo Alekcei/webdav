@@ -1,0 +1,14 @@
+[Unit]
+Description=WebDav Service
+After=network-online.target
+
+[Service]
+WorkingDirectory=/opt/webdav/
+MemoryHigh=256M
+ExecStart=/usr/bin/java -Xmx256m -jar webdav.jar --webdav.folder.path=/home/alekcei --server.port=8080
+User=alekcei
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

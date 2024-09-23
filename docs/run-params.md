@@ -44,3 +44,32 @@ http.port: 8082
  - linux davfs(монтирование диска на linux)
  - linux подключение через проводник(nautilus, caja)
  - Cx проводник(android приложение)
+
+### Запуск на Linux SystemMD
+Пример минимальных настроек  
+```properties
+[Unit]
+Description=WebDav Service
+After=network-online.target
+
+[Service]
+WorkingDirectory=/opt/webdav/
+MemoryHigh=256M
+ExecStart=/usr/bin/java -Xmx256m -jar webdav.jar --webdav.folder.path=/home/alekcei --server.port=8080
+User=alekcei
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
+```
+**Команды для работы с сервисом**  
+`systemctl daemon-reload`  - Применение настроек после редактирования  
+`systemctl start webdav`  - Запуск сервиса  
+`systemctl stop  webdav`  - Остановка  
+`systemctl status webdav` - Проверка статуса сервиса    
+
+**Ссылки по настройке**  
+https://prudnitskiy.pro/post/2018-01-24-systemd-quickstart/  
+https://ru.linux-console.net/?p=8202  
+https://habr.com/ru/companies/slurm/articles/255845/

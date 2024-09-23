@@ -15,7 +15,7 @@ import org.springframework.stereotype.Component;
 public class IdleTimeCustomizer implements WebServerFactoryCustomizer<NettyReactiveWebServerFactory> {
 
     @Value("${webdav.idleTimeSeconds:#{null}}")
-    int allIdleTimeSeconds = 61; // сек
+    Integer allIdleTimeSeconds = 61; // сек
     @Autowired
     private HttpHandler httpHandler;
 

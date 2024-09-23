@@ -3,6 +3,7 @@ package com.reactor.webdav.ui;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.annotation.Order;
 import org.springframework.core.io.FileSystemResource;
@@ -29,10 +30,17 @@ public class UiRouterController {
     @Autowired
     private IconService iconService;
 
+    String frontPath;
 
+    @Value("${webdav.front.path:#{null}}")
+    String frontFolder;
     @Bean
     @Order(-1)
     public RouterFunctions.Builder routeRequest2() {
+        frontPath = "." +  File.separator + "front" + File.separator;
+        if (frontFolder != null) {
+            frontPath = frontFolder;
+        }
         RouterFunctions.Builder builder = RouterFunctions.route();
         builder.route(new GetQueryParam("icon-file"),   this::iconFile); // заглушка для браузеров
         builder.route(new GetUi("ui"), this::getUi);               // Раздача статики
@@ -49,10 +57,10 @@ public class UiRouterController {
 
     @SneakyThrows
     public Mono<ServerResponse> getUi(ServerRequest serverRequest) {
-        Resource resource = new FileSystemResource("." +  File.separator + "front" + File.separator + serverRequest.requestPath().subPath(2).value() );
+        Resource resource = new FileSystemResource(frontPath + serverRequest.requestPath().subPath(2).value() );
 
         if (!resource.getFile().exists()  ||  serverRequest.headers().accept().contains(MediaType.parseMediaType("text/html"))) {
-            resource = new FileSystemResource("." +  File.separator + "front" + File.separator + "index.html");
+            resource = new FileSystemResource(frontPath + "index.html");
             return ServerResponse.ok()
                     .body(BodyInserters.fromResource(resource)  );
         }
