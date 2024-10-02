@@ -1,4 +1,4 @@
 FROM openjdk:11
-ARG JAR_FILE
-COPY ${JAR_FILE} /app.jar
-ENTRYPOINT ["java", "-jar", "/app.jar"]
+COPY webdav.jar app/webdav.jar
+COPY front app/front
+ENTRYPOINT ["java", "-jar", "app/webdav.jar"]
