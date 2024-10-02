@@ -2,6 +2,7 @@ plugins {
 	id 'java'
 	id 'org.springframework.boot' version '2.7.16-SNAPSHOT'
 	id 'io.spring.dependency-management' version '1.0.15.RELEASE'
+	id 'distribution'
 //	id 'com.palantir.docker' version '0.35.0'
 //	id 'com.palantir.docker-run' version '0.35.0'
 }
@@ -42,10 +43,28 @@ tasks.named('test') {
 	useJUnitPlatform()
 }
 bootJar {
-
 	archiveFileName = "webdav.${archiveExtension.get()}"
-	launchScript()
 }
+
+distributions {
+	main {
+		contents {
+				relativePath("../")
+				from new File("${projectDir}/Dockerfile")
+				into("front") {
+					from new File("${projectDir}/front")
+				}
+
+				from bootJar
+		}
+	}
+}
+
+distTar {
+	compression Compression.GZIP
+//	extension "tar.gz"
+}
+
 
 // id 'com.palantir.docker' version '0.35.0'
 // id 'com.palantir.docker-run' version '0.35.0'

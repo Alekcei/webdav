@@ -12,15 +12,13 @@ class WebDavConnection {
 
 @Injectable()
 export class WebDavClient {
-  baseUrl: string = "http://localhost:3505"
-  user: string = "alekseisosnovskikh";
-  password: string = "hqsfkdtmarovalyu";
+  baseUrl: string = ""
   constructor(
     private http: HttpClient,
     @Optional()
     private cfg: WebDavConnection
   ) {
-      console.log("cfg  ", cfg)
+      this.baseUrl = (this.cfg?.baseUrl || '');
   }
 
   public propfind(path :string, depth: '1'| '0'): Observable<Array<FileInfo>> {
@@ -158,10 +156,13 @@ export class WebDavClient {
 
   public get(path: string): Observable<any> {
     let headers = new HttpHeaders()
-    headers = headers.append('Authorization', 'Basic '  + btoa('ivanov:123456'))
+    if (this.cfg?.password && this.cfg?.user) {
+      headers = headers.append('Authorization', 'Basic '  + btoa(this.cfg?.user + ':' + this.cfg?.password));
+    }
+
   //  headers.append('Content-Type', 'text/xml')
 
-    return this.http.request(new HttpRequest("GET", this.baseUrl + "/"+path,null, {headers: headers} ))
+    return this.http.request(new HttpRequest("GET", (this.cfg?.baseUrl || '') + "/"+path,null, {headers: headers} ))
       .pipe(
         filter(httpEvent => httpEvent.type !== 0)
       )
