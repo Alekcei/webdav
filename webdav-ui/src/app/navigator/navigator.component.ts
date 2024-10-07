@@ -24,12 +24,14 @@ export class NavigatorComponent implements OnDestroy {
 
   path: string = '/';
 
+  hideHiddenFile = true;
+
   @Input()
   current!: FileInfo;
 
   constructor(private route: Router, private webDav: WebDavClient, private router: Router) {
     this.baseUrl = webDav.baseUrl;
-
+    this.hideHiddenFile = (localStorage.getItem("hideHiddenFile") == "true");
     this.routeSubscription = this.router.events.subscribe(event => {
       if (event instanceof NavigationEnd) {
         this.path = event.url;
@@ -39,6 +41,7 @@ export class NavigatorComponent implements OnDestroy {
   }
 
   files: Array<FileInfo> = [];
+  viewsFiles: Array<FileInfo> = [];
 
   @HostListener("contextmenu", ['$event'])
   click(e: Event){
@@ -54,11 +57,21 @@ export class NavigatorComponent implements OnDestroy {
           return false;
         }
         return true;
-      })
+      });
+      this.resetViewsFiles();
     });
   }
   get(){
     this.webDav.get("test/").subscribe();
+  }
+
+  resetViewsFiles(){
+    this.viewsFiles = this.files.filter(it => {
+      if (this.hideHiddenFile && it.displayName.startsWith(".")) {
+        return false;
+      }
+      return true;
+    });
   }
 
   ngOnDestroy(): void{
@@ -78,6 +91,20 @@ export class NavigatorComponent implements OnDestroy {
     const element =  (this.filesPanel.nativeElement as HTMLElement);
     element.scrollTo( element.scrollLeft + event.deltaY, 0)
 
+  }
+
+
+  @HostListener('window:keydown.control.h', ['$event'])
+  bigFont(event: KeyboardEvent) {
+    event.preventDefault();
+    this.hideHiddenFile = !this.hideHiddenFile;
+    localStorage.setItem("hideHiddenFile", String(this.hideHiddenFile));
+    this.resetViewsFiles();
+  }
+
+  @HostListener('selectionchange', ['$event'])
+  onMouseSelected(event: WheelEvent) {
+    console.log("", document.getSelection());
   }
 
   toUp() {

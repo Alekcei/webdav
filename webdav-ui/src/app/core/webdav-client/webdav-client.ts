@@ -4,7 +4,7 @@ import {filter, map, Observable} from "rxjs";
 import {Inject, Injectable, Injector, Optional} from "@angular/core";
 import {FileInfo} from "./webdav.model";
 
-class WebDavConnection {
+export class WebDavConnection {
   baseUrl: string = ""
   user: string = "";
   password: string = "";
