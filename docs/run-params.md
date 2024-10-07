@@ -67,8 +67,8 @@ WantedBy=multi-user.target
 `systemctl daemon-reload`  - Применение настроек после редактирования  
 `systemctl start webdav`  - Запуск сервиса  
 `systemctl stop  webdav`  - Остановка  
-`systemctl status webdav` - Проверка статуса сервиса    
-
+`systemctl status webdav` - Проверка статуса сервиса  
+`systemctl enable webdav` - Запуск при загрузке системы  
 **Ссылки по настройке**  
 https://prudnitskiy.pro/post/2018-01-24-systemd-quickstart/  
 https://ru.linux-console.net/?p=8202  
