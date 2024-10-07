@@ -1,5 +1,6 @@
 package com.reactor.webdav.ui;
 
+import com.reactor.webdav.WebDavIndexHtml;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +26,7 @@ import java.time.Duration;
 // http://citforum.ru/internet/webservers/webdav/
 @Component
 @Slf4j
-public class UiRouterController {
+public class UiRouterController implements WebDavIndexHtml {
 
     @Autowired
     private IconService iconService;
@@ -60,9 +61,7 @@ public class UiRouterController {
         Resource resource = new FileSystemResource(frontPath + serverRequest.requestPath().subPath(2).value() );
 
         if (!resource.getFile().exists()  ||  serverRequest.headers().accept().contains(MediaType.parseMediaType("text/html"))) {
-            resource = new FileSystemResource(frontPath + "index.html");
-            return ServerResponse.ok()
-                    .body(BodyInserters.fromResource(resource)  );
+            return indexHtml(serverRequest);
         }
 
 
@@ -86,5 +85,10 @@ public class UiRouterController {
     }
 
 
+    @Override
+    public Mono<ServerResponse> indexHtml(ServerRequest serverRequest) {
+        return ServerResponse.ok()
+                .body(BodyInserters.fromResource(new FileSystemResource(frontPath + "index.html"))  );
+    }
 }
 

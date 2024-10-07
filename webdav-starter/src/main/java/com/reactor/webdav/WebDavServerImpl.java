@@ -115,8 +115,13 @@ public class WebDavServerImpl implements WebDavServer {
     @Override
     public  Mono<Resource>getResource(String rootFolder, String path) {
         File fileLink = new File(rootFolder + path);
+
         if (!fileLink.exists()) {
             return Mono.error(new FileNotFoundException());
+        }
+
+        if (fileLink.isDirectory()) {
+            return Mono.error(new NotFileException());
         }
 
         Resource resource = new FileSystemResource(fileLink);

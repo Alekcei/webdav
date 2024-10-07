@@ -1,16 +1,17 @@
 package com.reactor.webdav;
 
-import com.reactor.webdav.dto.LockData;
 import com.reactor.webdav.dto.ParseUtils;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.io.buffer.*;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Base64Utils;
 import org.springframework.web.client.HttpStatusCodeException;
+
 import org.springframework.web.reactive.function.BodyExtractors;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.server.*;
@@ -20,6 +21,7 @@ import reactor.core.publisher.Mono;
 import java.io.*;
 import java.net.URI;
 import java.nio.file.FileAlreadyExistsException;
+import java.util.logging.Handler;
 
 
 // docs
@@ -47,6 +49,10 @@ public class RouterController {
 
     @Autowired
     WebdavConfiguration cfg;
+
+    @Autowired(required = false)
+    WebDavIndexHtml indexResolver;
+
     final String readonlyAllow = "OPTIONS, GET, HEAD, PROPFIND, PROPPATCH, ORDERPATCH";
 
     @Bean
@@ -196,8 +202,15 @@ public class RouterController {
         String rootFolder = cfg.getPath();
 
         return server.getResource(rootFolder, serverRequest.uri().getPath())
-                // BodyInserters.fromResource потдерживает заголовок Range, смотреть класс ResourceHttpMessageWriter
+                // BodyInserters.fromResource поддерживает заголовок Range, смотреть класс ResourceHttpMessageWriter
                 .flatMap(resource -> ServerResponse.ok().body(BodyInserters.fromResource(resource)))
+                .onErrorResume(NotFileException.class,   err -> {
+                    if (indexResolver!=null) {
+                        return indexResolver.indexHtml(serverRequest);
+                    }
+
+                    return ServerResponse.status(404).build();
+                })
                 .onErrorResume(FileNotFoundException.class,   err -> ServerResponse.status(404).build())
                 .onErrorResume(HttpStatusCodeException.class, err -> ServerResponse.status(err.getRawStatusCode()).build())
                 .onErrorResume(err -> ServerResponse.status(403).build());
