@@ -66,10 +66,31 @@ WantedBy=multi-user.target
 **Команды для работы с сервисом**  
 `systemctl daemon-reload`  - Применение настроек после редактирования  
 `systemctl start webdav`  - Запуск сервиса  
-`systemctl stop  webdav`  - Остановка  
+`systemctl stop  webdav`- Остановка  
 `systemctl status webdav` - Проверка статуса сервиса  
 `systemctl enable webdav` - Запуск при загрузке системы  
 **Ссылки по настройке**  
+https://docs.spring.io/spring-boot/how-to/deployment/installing.html
+https://javadevjournal.com/spring-boot/spring-boot-application-as-a-service/
 https://prudnitskiy.pro/post/2018-01-24-systemd-quickstart/  
 https://ru.linux-console.net/?p=8202  
 https://habr.com/ru/companies/slurm/articles/255845/
+
+### Запуск в DOCKER
+Пример минимальных настроек  
+_Создать image_  
+`docker build -t webdav:latest .  `  
+_Создать контейнер_  
+C именем `webdav` и мапингом портов с 8080 на 8081 и подключением домашнего каталога на раздачу  
+`docker run -d --name webdav -p 8081:8080 -v /home/alekcei:/volume webdav:latest`  
+
+```bash
+docker build -t webdav:latest .  
+docker run -d --name webdav -p 8081:8080 -v /home/alekcei:/volume webdav:latest
+```
+
+**Команды для работы с docker**  
+`docker ps`  - Список запущенных контейнеров  
+`docker image rm webdavvv2`  - Удаление image  
+`docker container rm webdav`- Удаление контейнера  
+Добавление флаг `-H tcp://192.168.0.105:2375` - выполнение на удаленном сервере

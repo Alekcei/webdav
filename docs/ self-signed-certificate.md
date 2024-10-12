@@ -30,16 +30,16 @@ BasicAuthLevel – тип аутентификации, используемый
 **Добавление файла на сервер**
 ```mermaid
 sequenceDiagram
-  WindowsClient->>WebDavServer: PUT 0 byte
+  WindowsClient->>+WebDavServer: PUT 0 byte
   WebDavServer->>WebDavServer: Создает пустой файл
-  WebDavServer->>WindowsClient: return http status 201
-  WindowsClient->>WebDavServer: LOCK file
-  WebDavServer->>WindowsClient: return http status 200<br/>C телом ответа
+  WebDavServer->>-WindowsClient: return http status 201
+  WindowsClient->>+WebDavServer: LOCK file
+  WebDavServer->>-WindowsClient: return http status 200<br/>C телом ответа
   WindowsClient->>WebDavServer: PUT файла с байтами
-  WindowsClient->>WebDavServer: UNLOCK file
-  WebDavServer->>WindowsClient: return http status 204<br/>C телом ответа
-  WindowsClient->>WebDavServer: PROPPATCH file
-  WebDavServer->>WindowsClient: return http status 207<br/>C телом ответа
+  WindowsClient->>+WebDavServer: UNLOCK file
+  WebDavServer->>-WindowsClient: return http status 204<br/>C телом ответа
+  WindowsClient->>+WebDavServer: PROPPATCH file
+  WebDavServer->>-WindowsClient: return http status 207<br/>C телом ответа
 ```
 
 Ссылки:  

@@ -1,0 +1,11 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="webdav" type="docker-deploy" factoryName="docker-image" server-name="Local Docker">
+    <deployment type="docker-image">
+      <settings>
+        <option name="imageTag" value="webdav:latest" />
+        <option name="containerName" value="webdav" />
+      </settings>
+    </deployment>
+    <method v="2" />
+  </configuration>
+</component>

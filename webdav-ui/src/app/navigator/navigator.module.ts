@@ -5,7 +5,7 @@ import {CommonModule} from "@angular/common";
 import {RouterOutlet} from "@angular/router";
 import {LeftPanelComponent} from "./left-panel2/left-panel.component";
 import {HttpClientModule} from "@angular/common/http";
-import {WebDavClient} from "../core/webdav-client/webdav-client";
+import {WebDavClient, WebDavConnection} from "../core/webdav-client/webdav-client";
 import {NavigatorComponent} from "./navigator.component";
 import {FilePopupModule} from "./file-popup/file-popup.module";
 
@@ -19,6 +19,7 @@ import {FilePopupModule} from "./file-popup/file-popup.module";
     FilePopupModule
   ],
   providers: [
+    { provide: WebDavConnection, useValue: { baseUrl: "http://localhost:8080"} },
     { provide: WebDavClient, useClass: WebDavClient }
   ],
   declarations: [NavigatorComponent, FileItmComponent],
