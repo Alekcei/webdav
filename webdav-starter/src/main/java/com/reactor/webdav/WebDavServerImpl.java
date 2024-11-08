@@ -14,6 +14,7 @@ import org.springframework.core.io.buffer.DataBufferUtils;
 import org.springframework.stereotype.Component;
 import org.springframework.util.FileCopyUtils;
 
+import org.springframework.util.FileSystemUtils;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -165,7 +166,17 @@ public class WebDavServerImpl implements WebDavServer {
             return Mono.error(new FileNotFoundException());
         }
 
-        fileLink.delete();
+        var resDel = false;
+        if (fileLink.isDirectory()) {
+            resDel = FileSystemUtils.deleteRecursively(new File("testfolder/webdav1"));
+        } else  {
+            resDel = fileLink.delete();
+        }
+
+        if (!resDel) {
+            return Mono.error(new FileNotFoundException());
+        }
+
         return Mono.just(true);
     }
     @Override

@@ -34,6 +34,11 @@ public class WebDavBuilder {
         return this;
     }
 
+    public WebDavBuilder newMethod(String method){
+        this.method = method;
+        return this;
+    }
+
     public WebDavBuilder setUrl(String url){
         this.url = url;
         return this;
@@ -133,6 +138,10 @@ public class WebDavBuilder {
 
     public <V> Mono<?> responseSingle(BiFunction<? super HttpClientResponse, ? super ByteBufMono, ? extends Mono<V>> receiver){
         return getRequestSender().responseSingle(receiver);
+    }
+
+    public HttpClientResponse block(){
+        return response().block();
     }
 
 }

@@ -22,7 +22,7 @@ import java.util.*;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @TestPropertySource(locations = "classpath:application.yaml")
 @Slf4j
-class MvcWebDavTests {
+class AppMvcWebDavTests {
 
 	// https://spring.io/guides/gs/reactive-rest-service/
 	@Autowired

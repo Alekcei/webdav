@@ -2,6 +2,7 @@ package com.reactor.webdav;
 
 import com.reactor.webdav.client.WebDavBuilder;
 import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -44,7 +45,10 @@ class MvcWebDavTests {
 		FileSystemUtils.deleteRecursively(new File("testfolder/webdav1"));
 		new File("testfolder/webdav1").mkdir();
 	}
-
+	@AfterAll
+	static void afterAll(){
+		FileSystemUtils.deleteRecursively(new File("testfolder/webdav1"));
+	}
 	@Test
 	@DisplayName("Запрос доступных методов для обращения")
 	void option() {
@@ -92,7 +96,7 @@ class MvcWebDavTests {
 	}
 
 	@Test
-	@DisplayName("Создание папки добавление файла, перемещение файла в новую папку, удаление файла ")
+	@DisplayName("Удаление каталога с файлами")
 	void manipulateFile() {
 
 		var client = new WebDavBuilder();
@@ -108,11 +112,11 @@ class MvcWebDavTests {
 		assert Objects.requireNonNull(resp).status().code() == 201;
 
 		resp = client
-			.setMethod("PUT")
 			.setUrl(getTestUrl())
-			.setPath("/newfolder/pdd.pdf")
 			.addUser(user)
 			.addPassword(password)
+			.setMethod("PUT")
+			.setPath("/newfolder/pdd.pdf")
 			.addFile(new File("testfolder/pdd.pdf"))
 			.response()
 			.block();
@@ -121,11 +125,11 @@ class MvcWebDavTests {
 		assert new File("testfolder/webdav1/newfolder/pdd.pdf").exists();
 
 		resp = client
-				.setMethod("COPY")
 				.setUrl(getTestUrl())
-				.setPath("/newfolder/pdd.pdf")
 				.addUser(user)
 				.addPassword(password)
+				.setMethod("COPY")
+				.setPath("/newfolder/pdd.pdf")
 				.setDestination("/newfolder/pddCopy.pdf")
 				.response()
 				.block();
@@ -138,19 +142,19 @@ class MvcWebDavTests {
 
 		var client = new WebDavBuilder();
 		var resp = client
-				.setMethod("MKCOL")
 				.setUrl(getTestUrl())
-				.setPath("/newfoldertest")
 				.addUser(user)
 				.addPassword("123456")
+				.setMethod("MKCOL")
+				.setPath("/newfoldertest")
 				.response()
 				.block();
 		 resp = client
-				.setMethod("MKCOL")
 				.setUrl(getTestUrl())
-				.setPath("/newfoldertest")
 				.addUser(user)
 				.addPassword("123456")
+				.setMethod("MKCOL")
+				.setPath("/newfoldertest")
 				.response()
 				.block();
 
@@ -162,7 +166,62 @@ class MvcWebDavTests {
 
 	}
 
+	@Test
+	@DisplayName("Создание папки добавление файла, перемещение файла в новую папку, удаление файла ")
+	void multiFolder() {
 
+		var client = new WebDavBuilder();
+		var resp = client
+				.setUrl(getTestUrl())
+				.addUser(user)
+				.addPassword(password)
+
+				.setMethod("MKCOL")
+				.setPath("/multiFolder")
+				.response()
+				.block();
+
+		assert Objects.requireNonNull(resp).status().code() == 201;
+		// создание первого файла
+		resp = client
+				.setUrl(getTestUrl())
+				.addUser(user)
+				.addPassword(password)
+				.setMethod("PUT")
+				.setPath("/multiFolder/pdd1.pdf")
+				.addFile(new File("testfolder/pdd.pdf"))
+				.response()
+				.block();
+
+		assert Objects.requireNonNull(resp).status().code() == 200;
+		assert new File("testfolder/webdav1/multiFolder/pdd1.pdf").exists();
+
+		// создание второго файла
+		resp = client
+				.setUrl(getTestUrl())
+				.addUser(user)
+				.addPassword(password)
+				.setMethod("PUT")
+				.setPath("/multiFolder/pdd2.pdf")
+				.addFile(new File("testfolder/pdd.pdf"))
+				.response()
+				.block();
+
+		assert Objects.requireNonNull(resp).status().code() == 200;
+		assert new File("testfolder/webdav1/multiFolder/pdd2.pdf").exists();
+
+		resp = client
+				.setUrl(getTestUrl())
+				.addUser(user)
+				.addPassword(password)
+				.setMethod("DELETE")
+				.setPath("/multiFolder/")
+				.response()
+				.block();
+
+		assert Objects.requireNonNull(resp).status().code() == 200;
+		assert !new File("testfolder/webdav1/multiFolder").exists();
+	}
 
 	String getTestUrl(){
 		return "http://localhost:" + port;
