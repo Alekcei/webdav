@@ -168,7 +168,7 @@ public class WebDavServerImpl implements WebDavServer {
 
         var resDel = false;
         if (fileLink.isDirectory()) {
-            resDel = FileSystemUtils.deleteRecursively(new File("testfolder/webdav1"));
+            resDel = FileSystemUtils.deleteRecursively(fileLink);
         } else  {
             resDel = fileLink.delete();
         }
