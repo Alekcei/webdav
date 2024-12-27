@@ -433,7 +433,9 @@ public class RouterController {
 
 
     String printRq(ServerRequest serverRequest, String bodyRes) {
-
+        if (!log.isTraceEnabled()) {
+            return bodyRes;
+        }
         StringBuilder sb = new StringBuilder();
         sb.append("\n" + serverRequest.exchange().getRequest().getMethodValue() + " " + serverRequest.path()).append("\n");
         serverRequest.headers().asHttpHeaders().forEach((itKey, itVal) -> {
@@ -441,7 +443,7 @@ public class RouterController {
         });
         sb.append("\n");
         sb.append(bodyRes);
-        log.info(sb.toString());
+        log.trace(sb.toString());
         return bodyRes;
     }
 

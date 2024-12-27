@@ -59,7 +59,7 @@ public class WebDavServerImpl implements WebDavServer {
         });
 
         if (unSupported.size() > 0) {
-            log.info("unSupported  " + unSupported);
+            log.trace("unSupported  " + unSupported);
         }
 
         List<FileInfo> fileProps = new LinkedList<>();
