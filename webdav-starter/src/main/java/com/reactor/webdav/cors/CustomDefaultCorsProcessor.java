@@ -86,7 +86,7 @@ class CustomDefaultCorsProcessor extends DefaultCorsProcessor {
         }
 
         HttpMethod requestMethod = getMethodToUse(request, preFlightRequest);
-        List<String> allowMethods = List.of("POST", "PROPFIND", "GET");
+        List<String> allowMethods = config.getAllowedMethods();//  List.of("POST", "PROPFIND", "GET", "OPTIONS");
         if (allowMethods == null) {
             log.debug("Reject: HTTP '" + requestMethod + "' is not allowed");
             rejectRequest(response);
