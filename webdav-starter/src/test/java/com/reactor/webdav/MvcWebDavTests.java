@@ -158,7 +158,7 @@ class MvcWebDavTests {
 				.response()
 				.block();
 
-		assert Objects.requireNonNull(resp).status().code() == 403;
+		assert Objects.requireNonNull(resp).status().code() == 405;
 
 
 
