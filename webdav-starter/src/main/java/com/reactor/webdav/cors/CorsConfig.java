@@ -36,7 +36,7 @@ public class CorsConfig implements WebFluxConfigurer {
 
         corsRegistry.addMapping("/**")
                 .allowedOrigins(origins)
-                .allowedMethods("GET", "POST", "PROPFIND", "PUT", "OPTIONS"); // put the http verbs you want allow
+                .allowedMethods("GET", "POST", "PROPFIND", "PUT",  "MKCOL", "DELETE", "HEAD", "OPTIONS"); // put the http verbs you want allow
 
     }
 
