@@ -141,6 +141,7 @@ public class RouterController {
         String rootFolder = cfg.getPath();
         return server.mkcol(rootFolder, serverRequest.uri().getPath())
             .flatMap(it -> ServerResponse.status(201).build())
+            .onErrorResume(FileAlreadyExistsException.class,   err -> ServerResponse.status(405).build())
             .onErrorResume(err -> ServerResponse.status(403).build())
             .onErrorResume(HttpStatusCodeException.class, err -> ServerResponse.status(err.getRawStatusCode()).build());
 

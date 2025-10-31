@@ -96,7 +96,7 @@ public class WebDavServerImpl implements WebDavServer {
     public Mono<Boolean> mkcol(String rootFolder, String uriPath) {
         File fileLink = new File(rootFolder + uriPath);
         if (fileLink.exists()) {
-            return Mono.error(new FileNotFoundException());
+            return Mono.error(new FileAlreadyExistsException(rootFolder + uriPath));
         }
         fileLink.mkdir();
         return  Mono.just(true);
