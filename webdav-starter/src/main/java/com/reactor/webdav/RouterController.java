@@ -4,12 +4,10 @@ import com.reactor.webdav.dto.ParseUtils;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.io.buffer.*;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
-import org.springframework.util.Base64Utils;
 import org.springframework.web.client.HttpStatusCodeException;
 
 import org.springframework.web.reactive.function.BodyExtractors;
@@ -21,7 +19,7 @@ import reactor.core.publisher.Mono;
 import java.io.*;
 import java.net.URI;
 import java.nio.file.FileAlreadyExistsException;
-import java.util.logging.Handler;
+import java.util.Base64;
 
 
 // docs
@@ -88,7 +86,7 @@ public class RouterController {
         String password = null;
 
         if (authorize != null && authorize.startsWith("Basic ")) {
-            String[] basicArg = new String(Base64Utils.decodeFromString(authorize.replace("Basic ", ""))).split(":");
+            String[] basicArg = new String(Base64.getDecoder().decode(authorize.replace("Basic ", ""))).split(":");
             if (basicArg.length>0) {
                 user = basicArg[0];
             }
