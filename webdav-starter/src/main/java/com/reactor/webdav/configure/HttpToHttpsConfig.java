@@ -1,5 +1,7 @@
 package com.reactor.webdav.configure;
 
+import jakarta.annotation.PostConstruct;
+import jakarta.annotation.PreDestroy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -10,8 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.server.reactive.HttpHandler;
 import reactor.core.publisher.Mono;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
+
 import java.net.URI;
 import java.net.URISyntaxException;
 

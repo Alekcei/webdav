@@ -1,12 +1,13 @@
 package com.reactor.webdav.ui.icon;
 
 import com.reactor.webdav.conditionals.IsLinuxCondition;
+import jakarta.annotation.PostConstruct;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
+
 import java.util.Map;
 
 @Service

@@ -10,10 +10,6 @@ plugins {
 group = 'com.reactor.webdav'
 version = '0.0.2'
 
-java {
-	sourceCompatibility = '11'
-}
-
 repositories {
 	mavenCentral()
 	maven { url 'https://repo.spring.io/milestone' }

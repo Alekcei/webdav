@@ -18,7 +18,7 @@ public class CustomHeader implements RequestPredicate {
 
     public static boolean testCalc(ServerRequest request, String method) {
         if (method.equals("other")) return true;
-        if (request.exchange().getRequest().getMethodValue().toLowerCase().equals(method)) return true;
+        if (request.exchange().getRequest().getMethod().name().toLowerCase().equals(method)) return true;
         if (request.exchange().getRequest().getHeaders().getOrDefault("CustomMethod", List.of()).contains(method)) return true;
         return false;
     }

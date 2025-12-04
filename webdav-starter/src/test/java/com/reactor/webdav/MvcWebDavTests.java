@@ -175,7 +175,6 @@ class MvcWebDavTests {
 				.setUrl(getTestUrl())
 				.addUser(user)
 				.addPassword(password)
-
 				.setMethod("MKCOL")
 				.setPath("/multiFolder")
 				.response()

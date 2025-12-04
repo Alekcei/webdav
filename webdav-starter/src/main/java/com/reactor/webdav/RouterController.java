@@ -354,7 +354,7 @@ public class RouterController {
 
         return bodyRq.flatMap(bodyRqData -> {
             StringBuilder sb = new StringBuilder();
-            sb.append("\n"+serverRequest.exchange().getRequest().getMethodValue() + " " + serverRequest.path()).append("\n");
+            sb.append("\n"+serverRequest.exchange().getRequest().getMethod().name()+ " " + serverRequest.path()).append("\n");
             serverRequest.headers().asHttpHeaders().forEach((itKey, itVal) -> {
                 sb.append(itKey + ": " + itVal + "\n");
             });
@@ -438,7 +438,7 @@ public class RouterController {
             return bodyRes;
         }
         StringBuilder sb = new StringBuilder();
-        sb.append("\n" + serverRequest.exchange().getRequest().getMethodValue() + " " + serverRequest.path()).append("\n");
+        sb.append("\n" + serverRequest.exchange().getRequest().getMethod().name() + " " + serverRequest.path()).append("\n");
         serverRequest.headers().asHttpHeaders().forEach((itKey, itVal) -> {
             sb.append(itKey + ": " + itVal + "\n");
         });
@@ -460,7 +460,7 @@ public class RouterController {
 
         return bodyRq.flatMap(bodyRqData -> {
             StringBuilder sb = new StringBuilder();
-            sb.append("\n"+serverRequest.exchange().getRequest().getMethodValue() + " " + serverRequest.path()).append("\n");
+            sb.append("\n"+serverRequest.exchange().getRequest().getMethod().name()+ " " + serverRequest.path()).append("\n");
             serverRequest.headers().asHttpHeaders().forEach((itKey, itVal) -> {
                 sb.append(itKey + ": " + itVal + "\n");
             });

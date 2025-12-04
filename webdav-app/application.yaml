@@ -1,4 +1,5 @@
-server.port: 3505
+#server.port: 3505
+server.port: 8080
 server.address: 0.0.0.0
 # http.port: 8082
 
@@ -17,15 +18,19 @@ server.address: 0.0.0.0
 #server.ssl.certificate: /home/alekcei/keystore/fullchain.pem
 #server.ssl.certificate-private-key: /home/alekcei/keystore/privkey.pem
 
-#webdav.cors.origins: '*'
+webdav.cors.origins: '*'
 #webdav.cors: http://localhost:4200"
-#logging.access.name: './access.log'
+logging.access.name: './access.log'
 
 ####  STATIC webdav  ####
 #webdav.folder.path: '/home/alekcei/webdav'
 
-webdav.folders[0].path: '/home/alekcei/webdav'
-webdav.folders[0].login: ivanov
-webdav.folders[0].password: 123456
+#webdav.folders[0].path: '/home/alekcei/webdav'
+#webdav.folders[0].login: ivanov
+#webdav.folders[0].password: 123456
 #
 #
+
+
+webdav.folder.path: /home/alekcei
+
